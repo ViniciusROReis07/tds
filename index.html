@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monitoramento de Qualidade da Água</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f4f9; color: #333; }
+        .container { max-width: 600px; margin: 30px auto; padding: 20px; background-color: #fff; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); }
+        h1 { text-align: center; }
+        .data-label { font-weight: bold; margin-top: 10px; }
+        .value { font-size: 1.2em; color: #1a73e8; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Monitoramento de Qualidade da Água</h1>
+        
+        <div>
+            <span class="data-label">TDS (ppm): </span>
+            <span id="tds-value" class="value">-</span>
+        </div>
+        <div>
+            <span class="data-label">Condutividade Elétrica (µS/cm): </span>
+            <span id="conductivity" class="value">-</span>
+        </div>
+        <div>
+            <span class="data-label">Salinidade (%): </span>
+            <span id="salinity" class="value">-</span>
+        </div>
+        <div>
+            <span class="data-label">Pureza da Água: </span>
+            <span id="purity" class="value">-</span>
+        </div>
+        <div>
+            <span class="data-label">Dureza da Água: </span>
+            <span id="hardness" class="value">-</span>
+        </div>
+        <div>
+            <span class="data-label">Estimativa da Presença de Íons: </span>
+            <span id="ions-estimate" class="value">-</span>
+        </div>
+    </div>
+
+    <script>
+        // Função para calcular os parâmetros com base no TDS em ppm
+        function calculateWaterParameters(tds) {
+            document.getElementById("tds-value").innerText = tds + " ppm";
+            document.getElementById("conductivity").innerText = (tds * 1.5).toFixed(2) + " - " + (tds * 2).toFixed(2) + " µS/cm";
+            document.getElementById("salinity").innerText = (tds * 0.001).toFixed(3) + "%";
+            document.getElementById("purity").innerText = tds < 500 ? "Boa para Consumo" : "Inadequada para Consumo";
+            document.getElementById("hardness").innerText = tds < 75 ? "Branda" : tds < 150 ? "Levemente Dura" : "Dura";
+            document.getElementById("ions-estimate").innerText = tds < 100 ? "Predominância de Bicarbonatos" : "Possível Presença de Cloretos e Sulfatos";
+        }
+
+        // Função para obter o valor de TDS do NodeMCU
+        function fetchTDSValue() {
+            fetch("http://172.20.10.9/tds")     // aquiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii subtitui 
+                .then(response => response.json())
+                .then(data => {
+                    let tdsValue = data.tds; // Acessa o valor de TDS retornado pelo NodeMCU
+                    calculateWaterParameters(tdsValue); // Calcula e exibe os parâmetros
+                })
+                .catch(error => console.error("Erro ao obter TDS:", error));
+        }
+
+        // Atualiza o valor de TDS a cada 5 segundos
+        setInterval(fetchTDSValue, 5000);
+    </script>
+</body>
+</html> 
