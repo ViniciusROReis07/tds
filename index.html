@@ -55,7 +55,7 @@
 
         // Função para obter o valor de TDS do NodeMCU
         function fetchTDSValue() {
-            fetch("http://172.20.10.9/tds")     // aquiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii subtitui 
+            fetch("http://172.20.10.9:80/tds")     // aquiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii subtitui 
                 .then(response => response.json())
                 .then(data => {
                     let tdsValue = data.tds; // Acessa o valor de TDS retornado pelo NodeMCU
